@@ -1385,8 +1385,18 @@ const i18n = function I18n(_OPTS = false) {
   /**
    * Missing key function
    */
-  const missingKey = (locale, value) => {
-    return value
+  const missingKey = (locale, value, iterations = 5) => {
+    if(iterations > 0) {
+      const v = locales[locale][value];
+      if(v === undefined) {
+        const curFallback = getFallback(locale, fallbacks);
+        if(curFallback !== undefined) {
+          return missingKey(curFallback, value, iterations-1);
+        }
+      }
+      return v ?? value;
+    }
+    return value;
   }
 
   /**
